@@ -125,7 +125,8 @@ router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
 }]);
 
 //add chat room member
-router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res, next) {
+router.post('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res, next) {
+	console.log("Inside add user")
 	var roomId = req.params.id;
 	var userId = req.params.userId;
 	Room.findById(roomId, function(err, room){
@@ -134,7 +135,7 @@ router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res
 			return next();
 		}
 		room.members.push(userId);
-		Room.findByIdAndUpdate(roomId, data, function(err, room){
+		Room.findByIdAndUpdate(roomId, {members: room.members}, function(err, room){
 			User.find(function(err, usersList){
 				if(err) throw err;
 				if(!usersList){
@@ -147,7 +148,9 @@ router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res
 					}
 				})
 				usersList = users;
-				res.render('chooseContacts', { room: createdRoom, users: usersList });
+				console.log("finish add user")
+				res.render('chooseContacts', { room: room, users: usersList });
+				res.redirect('/chat/addUsers');
 			});
 		})
 	});

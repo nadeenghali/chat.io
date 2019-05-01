@@ -126,6 +126,7 @@ module.exports = {
 	find, 
 	findOne, 
 	findById, 
+	findByIdAndUpdate,
 	addUser, 
 	getUsers, 
 	removeUser 
