@@ -116,8 +116,6 @@ router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
 			var usersDone = []
 			for(i in usersList){
 				if(!usersList[i]._id.equals(req.user._id)){
-					//console.log(usersList[i]._id)
-					//console.log(req.user._id)
 					usersDone.push(usersList[i]);
 				}
 			}
@@ -146,7 +144,7 @@ router.post('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, re
 				}
 				var users = []
 				usersList.forEach(function(user){
-					if(room.members.indexOf(user._id)>-1){
+					if(room.members.indexOf(user._id)<0){
 						users.push(user);
 					}
 				})
