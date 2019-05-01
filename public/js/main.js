@@ -1,5 +1,7 @@
 "use strict";
 
+var CryptoJS = require("crypto-js");
+
 var app = {
   rooms: function() {
     var socket = io("/rooms", { transports: ["websocket"] });
@@ -33,6 +35,7 @@ var app = {
 
   chat: function(roomId, username) {
     var socket = io("/chatroom", { transports: ["websocket"] });
+    //var CryptoJS = require("crypto-js");
     let image = null;
 
     // When socket connects, join the current chatroom
@@ -74,31 +77,70 @@ var app = {
         var messageContent = textareaEle.val().trim();
         console.log(image);
         if (messageContent !== "") {
+          //encrypt the text message content as an extra layer of protection
           var message = {
-            content: messageContent,
+            content: CryptoJS.AES.encrypt(
+              messageContent,
+              "extra layer of protection nbsmiaaardvraleaeyn"
+            ).toString(),
             username: username,
             date: Date.now(),
             type: "txt"
           };
-
-          socket.emit("newMessage", roomId, message);
+          socket.emit(
+            "newMessage",
+            roomId,
+            ////encrypt the wholde message object including the username and date
+            //and type and content
+            CryptoJS.AES.encrypt(
+              JSON.stringify(message),
+              "first layer of protection nbsmiaaardvraleaeyn"
+            ).toString()
+          );
           textareaEle.val("");
-          app.helpers.addMessage(message);
+          app.helpers.addMessage(
+            //encrypt the wholde message object including the username and date
+            //and type and content
+            CryptoJS.AES.encrypt(
+              JSON.stringify(message),
+              "first layer of protection nbsmiaaardvraleaeyn"
+            ).toString()
+          );
         }
         console.log(image);
 
         if (image != null) {
+          //encrypt the file message content as an extra layer of protection
           var message = {
-            content: image,
+            content: CryptoJS.AES.encrypt(
+              JSON.stringify(image),
+              "extra layer of protection nbsmiaaardvraleaeyn2"
+            ).toString(),
             username: username,
             date: Date.now(),
             type: "file"
           };
 
           console.log("sending img");
-          socket.emit("newMessage", roomId, message);
+          socket.emit(
+            "newMessage",
+            roomId,
+            //encrypt the wholde message object including the username and date
+            //and type and content
+            CryptoJS.AES.encrypt(
+              JSON.stringify(message),
+              "first layer of protection nbsmiaaardvraleaeyn1"
+            ).toString()
+          );
           image = null;
-          app.helpers.addMessage(message);
+          app.helpers.addMessage(
+            //encrypt the wholde message object including the username and date
+            //and type and content
+            CryptoJS.AES.encrypt(
+              JSON.stringify(message),
+              "first layer of protection nbsmiaaardvraleaeyn"
+            ).toString()
+          );
         }
       });
 
@@ -180,13 +222,27 @@ var app = {
 
     // Adding a new message to chat history
     addMessage: function(message) {
+      //var CryptoJS = require("crypto-js");
+      //decrypt message
+      message = JSON.parse(
+        CryptoJS.AES.decrypt(
+          message,
+          "first layer of protection nbsmiaaardvraleaeyn"
+        ).toString(CryptoJS.enc.Utf8)
+      );
+
       message.date = new Date(message.date).toLocaleString();
       message.username = this.encodeHTML(message.username);
 
       var html = "";
       console.log(message.type);
       if (message.type === "txt") {
-        message.content = this.encodeHTML(message.content);
+        message.content = this.encodeHTML(
+          CryptoJS.AES.decrypt(
+            message.content,
+            "extra layer of protection nbsmiaaardvraleaeyn2"
+          ).toString(CryptoJS.enc.Utf8)
+        );
         html = `<li>
                     <div class="message-data">
                       <span class="message-data-name">${message.username}</span>
@@ -199,7 +255,14 @@ var app = {
       }
       if (message.type === "file") {
         console.log(message.content);
-        message.content = this.encodeHTML(message.content);
+        message.content = this.encodeHTML(
+          JSON.parse(
+            CryptoJS.AES.decrypt(
+              message.content,
+              "extra layer of protection nbsmiaaardvraleaeyn2"
+            ).toString(CryptoJS.enc.Utf8)
+          )
+        );
         output.src = message.content;
         html = `<li>
                     <div class="message-data">
