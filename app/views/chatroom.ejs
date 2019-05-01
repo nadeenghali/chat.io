@@ -25,8 +25,11 @@
         </div> <!-- end chat-history -->
 
         <div class="chat-message clearfix">
-          <textarea name="message" placeholder ="Type your message" rows="3"></textarea>
-          <button type="submit">Send</button>
+          <textarea name="message" id="message" placeholder ="Type your message" rows="3"></textarea>
+          <button id="location-button">Location</button>
+          <div id="output"></div>
+          &nbsp;
+          <button id="send" type="submit">Send</button>
         </div> <!-- end chat-message -->
       </div> <!-- end chat -->
 
@@ -40,9 +43,28 @@
         </ul>
       </div>
     </div> <!-- end container -->
-    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/main.js"></script>
+    <script> $('#location-button').click(function(){    
+       if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position){
+            console.log(position);
+            let message = 'https://maps.google.com/?q='+position.coords.latitude +','+position.coords.longitude;
+            // let message =  'http://google.com/maps/bylatlng?lat=' + position.coords.latitude + '&lng='+position.coords.longitude;
+            $("textarea#message").val(message);
+            $( "button#send" ).trigger( "click" );
+            // $.get( "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ position.coords.latitude + "," + position.coords.longitude +"&sensor=false&key=AIzaSyDmp_c0aP9u9KUV4npEVV-aa_fJD6s9XJ0", function(data) {
+            //   console.log(data);
+            // })
+            // var img = new Image();
+            // img.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + position.coords.latitude + "," + position.coords.longitude + "&zoom=13&size=800x400&sensor=false&key=AIzaSyDmp_c0aP9u9KUV4npEVV-aa_fJD6s9XJ0";
+            // $('#message').html(img);
+          });
+          
+      }
+    });</script>
     <script>$(function(){app.chat('<%= room.id %>', '<%= user.username %>')});</script>
+    
   </body>
 </html>
