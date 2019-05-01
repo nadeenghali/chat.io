@@ -109,7 +109,16 @@ router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
 			if(!usersList){
 				return next();
 			}
-			usersList.splice(usersList.indexOf(req.user),1);
+			var i;
+			var usersDone = []
+			for(i in usersList){
+				if(!usersList[i]._id.equals(req.user._id)){
+					//console.log(usersList[i]._id)
+					//console.log(req.user._id)
+					usersDone.push(usersList[i]);
+				}
+			}
+			usersList = usersDone;
 			res.render('chooseContacts', { room: createdRoom, users: usersList });
 		});
 	})
@@ -131,7 +140,7 @@ router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res
 				if(!usersList){
 					return next();
 				}
-				users = []
+				var users = []
 				usersList.forEach(function(user){
 					if(room.members.indexOf(user._id)>-1){
 						users.push(user);		
