@@ -49,30 +49,29 @@ var app = {
         }
       });
 
+      var inputFile = $("input[name='input']");
+      document
+        .getElementById("input")
+        .addEventListener("change", function(event) {
+          // Prepeare file reader
+          var file = event.target.files[0];
+          var fileReader = new FileReader();
+          console.log(image);
+
+          fileReader.onloadend = function(event) {
+            // Send an image event to the socket
+            image = event.target.result;
+            console.log(image);
+            output.src = image;
+          };
+          console.log(image);
+          // Read file
+          fileReader.readAsDataURL(file);
+        });
       // Whenever the user hits the save button, emit newMessage event.
       $(".chat-message button").on("click", function(e) {
         var textareaEle = $("textarea[name='message']");
         var messageContent = textareaEle.val().trim();
-
-        var inputFile = $("input[name='input']");
-        document
-          .getElementById("input")
-          .addEventListener("change", function(event) {
-            // Prepeare file reader
-            var file = event.target.files[0];
-            var fileReader = new FileReader();
-            console.log(image);
-
-            fileReader.onloadend = function(event) {
-              // Send an image event to the socket
-              image = event.target.result;
-              console.log(image);
-              output.src = image;
-            };
-            console.log(image);
-            // Read file
-            fileReader.readAsDataURL(file);
-          });
         console.log(image);
         if (messageContent !== "") {
           var message = {
