@@ -18,9 +18,9 @@
           <ul>
             <% if(users.length > 0) { %>
               <% users.forEach(function(user) { %>
-                  <a href="/chat/<%= room._id %>/addUsers/<%= user.id %>">
-                    <li class="room-item"><%= (user.username.length > 25? user.username.substr(0, 25) + '...': user.username) %></li>
-                  </a>
+                  <form id="addUser" action="/chat/<%=room._id%>/addUsers/<%=user.id%>" method="put">
+                    <button class="room-item"><%= (user.username.length > 25? user.username.substr(0, 25) + '...': user.username) %></button>
+                  </form>
                 <% }); %>
             <% }  %>
           </ul>
@@ -31,6 +31,6 @@
     <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/main.js"></script>
-    <!-- <script>$(function(){app.rooms()});</script> -->
+    <script>$(function(){app.rooms()});</script>
   </body>
 </html>
