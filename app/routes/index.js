@@ -94,6 +94,9 @@ router.get('/chat/:id', [User.isAuthenticated, function(req, res, next) {
 		if(!room){
 			return next();
 		}
+		if(room.indexOf(req.user._id)<0){
+			return next();
+		}
 		//check that user in room members
 		res.render('chatroom', { user: req.user, room: room });
 	});
