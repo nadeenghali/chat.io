@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
 
 // Login
 router.post('/login', passport.authenticate('local', {
-	successRedirect: '/rooms',
+	successRedirect: '/rooms/',
 	failureRedirect: '/',
 	failureFlash: true
 }));
@@ -50,6 +50,7 @@ router.post('/register', function(req, res, next) {
 			}else{
 				User.create(credentials, function(err, newUser){
 					if(err) throw err;
+					console.log(newUser);
 					req.flash('success', 'Your account has been created. Please log in.');
 					res.redirect('/');
 				});
@@ -60,12 +61,22 @@ router.post('/register', function(req, res, next) {
 
 // Rooms
 router.get('/rooms', [User.isAuthenticated, function(req, res, next) {
+	var userId = req.user._id;
 	Room.find(function(err, rooms){
 		if(err) throw err;
+		var i;
+		//console.log(rooms);
+		var tempRooms = []
+		for(i in rooms){
+			if(rooms[i].members.includes(userId)){
+				tempRooms.push(rooms[i]);
+			}
+		}
+		rooms = tempRooms
 		User.find(function(err, userstmp){
-			if(err) res.render('rooms', { rooms });
 			var users = []
-			userstmp.forEach(function(user) { 
+			if(err) res.render('rooms', { rooms, users});
+			userstmp.forEach(function(user) {
 				if (!user._id.equals(req.user._id)){
 					users.push(user)
 				}
@@ -83,9 +94,67 @@ router.get('/chat/:id', [User.isAuthenticated, function(req, res, next) {
 		if(!room){
 			return next();
 		}
+		if(room.members.indexOf(req.user._id)<0){
+			return next();
+		}
+		//check that user in room members
 		res.render('chatroom', { user: req.user, room: room });
 	});
 
+}]);
+
+// create Chat Room
+router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
+	var room = {title : req.body.title, connections : [], members : [req.user._id]};
+	Room.create(room, function(err, createdRoom){
+		User.find(function(err, usersList){
+			if(err) throw err;
+			if(!usersList){
+				return next();
+			}
+			var i;
+			var usersDone = []
+			for(i in usersList){
+				if(!usersList[i]._id.equals(req.user._id)){
+					usersDone.push(usersList[i]);
+				}
+			}
+			usersList = usersDone;
+			res.render('chooseContacts', { room: createdRoom, users: usersList });
+		});
+	})
+}]);
+
+//add chat room member
+router.post('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res, next) {
+	console.log("Inside add user")
+	var roomId = req.params.id;
+	var userId = req.params.userId;
+	Room.findById(roomId, function(err, room){
+		if(err) throw err;
+		if(!room){
+			return next();
+		}
+		room.members.push(userId);
+		Room.findByIdAndUpdate(roomId, {members: room.members}, function(err, room){
+			User.find(function(err, usersList){
+				if(err) throw err;
+				if(!usersList){
+					return next();
+				}
+				var users = []
+				usersList.forEach(function(user){
+					if(room.members.indexOf(user._id)<0){
+						users.push(user);
+					}
+				})
+				usersList = users;
+				console.log("finish add user")
+				res.render('chooseContacts', { room: room, users: usersList });
+				res.redirect('/chat/addUsers');
+			});
+		})
+	});
 }]);
 
 // Logout
