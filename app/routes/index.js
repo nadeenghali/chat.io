@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
 
 // Login
 router.post('/login', passport.authenticate('local', {
-	successRedirect: '/rooms',
+	successRedirect: '/rooms/',
 	failureRedirect: '/',
 	failureFlash: true
 }));
@@ -77,8 +77,15 @@ router.post('/register', function(req, res, next) {
 
 // Rooms
 router.get('/rooms', [User.isAuthenticated, function(req, res, next) {
+	var username = req.user.username;
 	Room.find(function(err, rooms){
 		if(err) throw err;
+		console.log(rooms);
+		for(var room in rooms){
+			if(!room.members.includes(username)){
+				rooms.splice(rooms.indexOf(room), 1)
+			}
+		}
 		res.render('rooms', { rooms });
 	});
 }]);
@@ -94,6 +101,34 @@ router.get('/chat/:id', [User.isAuthenticated, function(req, res, next) {
 		res.render('chatroom', { user: req.user, room: room });
 	});
 
+}]);
+
+// Chat Room contacts
+router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
+	var room = {title : req.title, connections : [], members : [req.user.id]};
+	Room.create(room, function(err, createdRoom){
+		User.find(function(err, usersList){
+			if(err) throw err;
+			if(!usersList){
+				return next();
+			}
+			res.render('chooseContacts', { room: createdRoom, users: usersList });
+		});
+	})
+}]);
+
+//add chat room member
+router.put('/chat/:id/addUsers/:username',[User.isAuthenticated, function(req, res, next) {
+	var roomId = req.params.id;
+	var username = req.params.username;
+	Room.findById(roomId, function(err, room){
+		if(err) throw err;
+		if(!room){
+			return next();
+		}
+		room.members.push(username);
+		Room.findByIdAndUpdate(roomId, data, function(err, room){})
+	});
 }]);
 
 // Logout
