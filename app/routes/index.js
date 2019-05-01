@@ -63,12 +63,15 @@ router.get('/rooms', [User.isAuthenticated, function(req, res, next) {
 	var userId = req.user._id;
 	Room.find(function(err, rooms){
 		if(err) throw err;
+		var i;
 		console.log(rooms);
-		for(var room in rooms){
-			if(!room.members.includes(userId)){
-				rooms.splice(rooms.indexOf(room), 1)
+		var tempRooms = []
+		for(i in rooms){
+			if(rooms[i].members.includes(userId)){
+				tempRooms.push(rooms[i]);
 			}
 		}
+		rooms = tempRooms
 		User.find(function(err, userstmp){
 			var users = []
 			if(err) res.render('rooms', { rooms, users});
@@ -90,15 +93,20 @@ router.get('/chat/:id', [User.isAuthenticated, function(req, res, next) {
 		if(!room){
 			return next();
 		}
+		//check that user in room members
 		res.render('chatroom', { user: req.user, room: room });
 	});
 
 }]);
 
-// Chat Room contacts
+// create Chat Room
 router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
-	var room = {title : req.title, connections : [], members : [req.user.id]};
+	var membersList = [];
+	membersList.push(req.user._id);
+	let room = {title : req.title, connections : [], members : [req.user._id]};
+	console.log(room);
 	Room.create(room, function(err, createdRoom){
+		console.log(room);
 		User.find(function(err, usersList){
 			if(err) throw err;
 			if(!usersList){
