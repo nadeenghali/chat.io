@@ -3,3 +3,15 @@ node_modules
 
 # Logs
 debug.log
+
+app/ssl
+
+rootCA.key
+rootCA.pem
+rootCA.srl
+server.key
+server.csr
+server.crt
+server.csr.cnf
+server.csr.crt
+v3.ext
