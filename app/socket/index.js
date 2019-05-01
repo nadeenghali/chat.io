@@ -3,6 +3,7 @@
 var config 	= require('../config');
 var redis 	= require('redis').createClient;
 var adapter = require('socket.io-redis');
+var fs  = require('fs');
 
 var Room = require('../models/room');
 
@@ -116,9 +117,21 @@ var ioEvents = function(io) {
  *
  */
 var init = function(app){
+	var https = require('https')
 
-	var server 	= require('http').Server(app);
-	var io 		= require('socket.io')(server);
+	var certOptions = {
+	  key: fs.readFileSync('encryption/server.key'),
+	  cert: fs.readFileSync('encryption/server.crt')
+	}
+	
+	// var app = express()
+	
+	var server = https.createServer(certOptions, app)
+	// var server 	= require('http').Server(app);
+	// var https = require('https');
+	// var server = https.Server(options, app);
+	
+	var io 	= require('socket.io')(server);
 
 	// Force Socket.io to ONLY use "websockets"; No Long Polling.
 	io.set('transports', ['websocket']);
