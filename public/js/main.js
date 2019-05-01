@@ -1,6 +1,6 @@
 "use strict";
 
-var CryptoJS = require("crypto-js");
+//var CryptoJS = require("crypto-js");
 
 var app = {
   rooms: function() {
@@ -35,7 +35,7 @@ var app = {
 
   chat: function(roomId, username) {
     var socket = io("/chatroom", { transports: ["websocket"] });
-    //var CryptoJS = require("crypto-js");
+    //import CryptoJS from "crypto-js");
     let image = null;
 
     // When socket connects, join the current chatroom
@@ -75,18 +75,33 @@ var app = {
       $(".chat-message button").on("click", function(e) {
         var textareaEle = $("textarea[name='message']");
         var messageContent = textareaEle.val().trim();
-        console.log(image);
+        console.log(
+          "message content",
+          CryptoJS.AES.encrypt(
+            messageContent,
+            "extra layer of protection nbsmiaaardvraleaeyn2"
+          ).toString()
+        );
         if (messageContent !== "") {
           //encrypt the text message content as an extra layer of protection
           var message = {
             content: CryptoJS.AES.encrypt(
               messageContent,
-              "extra layer of protection nbsmiaaardvraleaeyn"
+              "extra layer of protection nbsmiaaardvraleaeyn2"
             ).toString(),
             username: username,
             date: Date.now(),
             type: "txt"
           };
+          console.log("unencrypted messge", message);
+          console.log(
+            "encrypted messge",
+            CryptoJS.AES.encrypt(
+              JSON.stringify(message),
+              "first layer of protection nbsmiaaardvraleaeyn"
+            ).toString()
+          );
+
           socket.emit(
             "newMessage",
             roomId,
@@ -107,7 +122,7 @@ var app = {
             ).toString()
           );
         }
-        console.log(image);
+        console.log("image", image);
 
         if (image != null) {
           //encrypt the file message content as an extra layer of protection
@@ -129,7 +144,7 @@ var app = {
             //and type and content
             CryptoJS.AES.encrypt(
               JSON.stringify(message),
-              "first layer of protection nbsmiaaardvraleaeyn1"
+              "first layer of protection nbsmiaaardvraleaeyn"
             ).toString()
           );
           image = null;
@@ -152,6 +167,7 @@ var app = {
 
       // Append a new message
       socket.on("addMessage", function(message) {
+        console.log("message", message);
         app.helpers.addMessage(message);
       });
     });
@@ -236,6 +252,8 @@ var app = {
 
       var html = "";
       console.log(message.type);
+      console.log(message.content);
+
       if (message.type === "txt") {
         message.content = this.encodeHTML(
           CryptoJS.AES.decrypt(
@@ -243,6 +261,7 @@ var app = {
             "extra layer of protection nbsmiaaardvraleaeyn2"
           ).toString(CryptoJS.enc.Utf8)
         );
+        console.log(message.content);
         html = `<li>
                     <div class="message-data">
                       <span class="message-data-name">${message.username}</span>
@@ -254,7 +273,7 @@ var app = {
                   </li>`;
       }
       if (message.type === "file") {
-        console.log(message.content);
+        console.log("message content", message.content);
         message.content = this.encodeHTML(
           JSON.parse(
             CryptoJS.AES.decrypt(
@@ -263,6 +282,8 @@ var app = {
             ).toString(CryptoJS.enc.Utf8)
           )
         );
+        console.log("message content", message.content);
+
         output.src = message.content;
         html = `<li>
                     <div class="message-data">
