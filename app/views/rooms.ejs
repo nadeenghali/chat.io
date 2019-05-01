@@ -14,7 +14,7 @@
       </div>
 
       <div class="room" style="width: 100%;">
-        <div class="room-header clearfix">
+        <!-- <div class="room-header clearfix">
           <div class="room-about">
             <div class="room-title">Rooms</div>
             <div class="room-num-rooms"><%= rooms.length %> Room(s)</div>
@@ -42,6 +42,18 @@
             <% } %>
           </ul>
         </div> <!-- end room-list -->
+
+        <div class="room-list">
+          <ul>
+            <% if(users.length > 0) { %>
+              <% users.forEach(function(user) { %>
+                  <a href="/privateroom/<%= user.id %>">
+                    <li class="room-item"><%= (user.username.length > 25? user.username.substr(0, 25) + '...': user.username) %></li>
+                  </a>
+                <% }); %>
+            <% }  %>
+          </ul>
+        </div> <!-- end user-list -->
       </div> <!-- end room -->
 
     </div> <!-- end container -->

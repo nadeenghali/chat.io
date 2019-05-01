@@ -58,35 +58,27 @@ router.post('/register', function(req, res, next) {
 	}
 });
 
-// Social Authentication routes
-// 1. Login via Facebook
-// router.get('/auth/facebook', passport.authenticate('facebook'));
-// router.get('/auth/facebook/callback', passport.authenticate('facebook', {
-// 		successRedirect: '/rooms',
-// 		failureRedirect: '/',
-// 		failureFlash: true
-// }));
-
-// 2. Login via Twitter
-// router.get('/auth/twitter', passport.authenticate('twitter'));
-// router.get('/auth/twitter/callback', passport.authenticate('twitter', {
-// 		successRedirect: '/rooms',
-// 		failureRedirect: '/',
-// 		failureFlash: true
-// }));
-
 // Rooms
 router.get('/rooms', [User.isAuthenticated, function(req, res, next) {
-	var username = req.user.username;
+	var userId = req.user._id;
 	Room.find(function(err, rooms){
 		if(err) throw err;
 		console.log(rooms);
 		for(var room in rooms){
-			if(!room.members.includes(username)){
+			if(!room.members.includes(userId)){
 				rooms.splice(rooms.indexOf(room), 1)
 			}
 		}
-		res.render('rooms', { rooms });
+		User.find(function(err, userstmp){
+			var users = []
+			if(err) res.render('rooms', { rooms, users});
+			userstmp.forEach(function(user) { 
+				if (!user._id.equals(req.user._id)){
+					users.push(user)
+				}
+			 })
+			res.render('rooms', { rooms, users });
+		})
 	});
 }]);
 
@@ -118,15 +110,15 @@ router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
 }]);
 
 //add chat room member
-router.put('/chat/:id/addUsers/:username',[User.isAuthenticated, function(req, res, next) {
+router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res, next) {
 	var roomId = req.params.id;
-	var username = req.params.username;
+	var userId = req.params.userId;
 	Room.findById(roomId, function(err, room){
 		if(err) throw err;
 		if(!room){
 			return next();
 		}
-		room.members.push(username);
+		room.members.push(userId);
 		Room.findByIdAndUpdate(roomId, data, function(err, room){})
 	});
 }]);
