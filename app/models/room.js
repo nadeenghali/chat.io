@@ -4,8 +4,6 @@ var roomModel   = require('../database').models.room;
 var User 		= require('../models/user');
 
 var create = function (data, callback){
-	console.log("data")
-	console.log(data)
 	var newRoom = new roomModel(data);
 	newRoom.save(callback);
 };

@@ -50,6 +50,7 @@ router.post('/register', function(req, res, next) {
 			}else{
 				User.create(credentials, function(err, newUser){
 					if(err) throw err;
+					console.log(newUser);
 					req.flash('success', 'Your account has been created. Please log in.');
 					res.redirect('/');
 				});
@@ -64,7 +65,7 @@ router.get('/rooms', [User.isAuthenticated, function(req, res, next) {
 	Room.find(function(err, rooms){
 		if(err) throw err;
 		var i;
-		console.log(rooms);
+		//console.log(rooms);
 		var tempRooms = []
 		for(i in rooms){
 			if(rooms[i].members.includes(userId)){
@@ -101,17 +102,14 @@ router.get('/chat/:id', [User.isAuthenticated, function(req, res, next) {
 
 // create Chat Room
 router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
-	var membersList = [];
-	membersList.push(req.user._id);
-	let room = {title : req.title, connections : [], members : [req.user._id]};
-	console.log(room);
+	var room = {title : req.body.title, connections : [], members : [req.user._id]};
 	Room.create(room, function(err, createdRoom){
-		console.log(room);
 		User.find(function(err, usersList){
 			if(err) throw err;
 			if(!usersList){
 				return next();
 			}
+			usersList.splice(usersList.indexOf(req.user),1);
 			res.render('chooseContacts', { room: createdRoom, users: usersList });
 		});
 	})
@@ -127,7 +125,22 @@ router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res
 			return next();
 		}
 		room.members.push(userId);
-		Room.findByIdAndUpdate(roomId, data, function(err, room){})
+		Room.findByIdAndUpdate(roomId, data, function(err, room){
+			User.find(function(err, usersList){
+				if(err) throw err;
+				if(!usersList){
+					return next();
+				}
+				users = []
+				usersList.forEach(function(user){
+					if(room.members.indexOf(user._id)>-1){
+						users.push(user);		
+					}
+				})
+				usersList = users;
+				res.render('chooseContacts', { room: createdRoom, users: usersList });
+			});
+		})
 	});
 }]);
 
