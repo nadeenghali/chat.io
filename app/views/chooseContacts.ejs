@@ -11,6 +11,7 @@
     <div class="container clearfix" style="width: 500px;">
       <div class="controls" style="border: none; width: 100%;">
           <a href="/logout" class="logout-btn" style="width: auto; padding: 13px; font-size: 12px;">Logout</a>
+          <a href="/rooms" class="rooms-btn" style="width: auto; padding: 13px; font-size: 12px;">Back</a>
       </div>
 
       <div class="room" style="width: 100%;">
@@ -18,7 +19,8 @@
           <ul>
             <% if(users.length > 0) { %>
               <% users.forEach(function(user) { %>
-                  <form id="addUser" action="/chat/<%=room._id%>/addUsers/<%=user.id%>" method="put">
+                  <form id="addUser" action="/chat/<%=room._id%>/addUsers/<%=user.id%>" method="post">
+                    <!-- /chat/:id/addUsers/:userId -->
                     <button class="room-item"><%= (user.username.length > 25? user.username.substr(0, 25) + '...': user.username) %></button>
                   </form>
                 <% }); %>

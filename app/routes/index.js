@@ -76,7 +76,7 @@ router.get('/rooms', [User.isAuthenticated, function(req, res, next) {
 		User.find(function(err, userstmp){
 			var users = []
 			if(err) res.render('rooms', { rooms, users});
-			userstmp.forEach(function(user) { 
+			userstmp.forEach(function(user) {
 				if (!user._id.equals(req.user._id)){
 					users.push(user)
 				}
@@ -125,7 +125,8 @@ router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
 }]);
 
 //add chat room member
-router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res, next) {
+router.post('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res, next) {
+	console.log("hena");
 	var roomId = req.params.id;
 	var userId = req.params.userId;
 	Room.findById(roomId, function(err, room){
@@ -143,7 +144,7 @@ router.put('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res
 				var users = []
 				usersList.forEach(function(user){
 					if(room.members.indexOf(user._id)>-1){
-						users.push(user);		
+						users.push(user);
 					}
 				})
 				usersList = users;
