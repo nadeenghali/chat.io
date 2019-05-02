@@ -19,6 +19,10 @@ var findById = function (id, callback){
 	userModel.findById(id, callback);
 }
 
+var find = function (data, callback){
+	userModel.find(data, callback);
+}
+
 
 /**
  * Find a user, and create one if doesn't exist already.

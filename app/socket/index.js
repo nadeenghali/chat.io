@@ -14,11 +14,12 @@ var Room = require('../models/room');
 var ioEvents = function(io) {
 
 	// Rooms namespace
-	io.of('/rooms').on('connection', function(socket) {
+	/*io.of('/rooms').on('connection', function(socket) {
 
 		// Create a new room
 		socket.on('createRoom', function(title) {
 			Room.findOne({'title': new RegExp('^' + title + '$', 'i')}, function(err, room){
+				console.log(room);
 				if(err) throw err;
 				if(room){
 					socket.emit('updateRoomsList', { error: 'Room title already exists.' });
@@ -33,7 +34,7 @@ var ioEvents = function(io) {
 				}
 			});
 		});
-	});
+	});*/
 
 	// Chatroom namespace
 	io.of('/chatroom').on('connection', function(socket) {

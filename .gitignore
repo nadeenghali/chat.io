@@ -15,5 +15,5 @@ server.crt
 server.csr.cnf
 server.csr.crt
 v3.ext
-encryption/
+encryption
 mydomain.csr

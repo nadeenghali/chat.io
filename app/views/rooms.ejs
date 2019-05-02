@@ -20,11 +20,13 @@
             <div class="room-num-rooms"><%= rooms.length %> Room(s)</div>
           </div>
           <i class="fa fa-th-list"></i>
-        </div> end room-header -->
+        </div> <!-- end room-header -->
 
-        <div class="room-create clearfix" style="border-bottom: 2px solid white;">
-          <input type="text" name="title" autofocus placeholder ="Type a new room">
-          <button>Create</button>
+        <div style="border-bottom: 2px solid white;">
+          <form action="/chat/create" class="room-create clearfix" method="post">
+            <input type="text" name="title" autofocus placeholder ="Type a new room">
+            <button>Create</button>
+          </form>
         </div> <!-- end room-create -->
 
         <div class="room-list">
@@ -53,7 +55,6 @@
           </ul>
         </div> <!-- end user-list -->
       </div> <!-- end room -->
-
     </div> <!-- end container -->
     <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
     <script src="/socket.io/socket.io.js"></script>
