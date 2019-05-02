@@ -36,7 +36,7 @@ router.get('/token', function (req, res, next){
 		if(err) throw err;
 		console.log("token")
 		console.log(token)
-		res.cookie('token', token, { maxAge: 86400, secure: true}).redirect('/rooms');
+		res.cookie('token', token, { maxAge: 86400 }).redirect('/rooms');
 	})
 })
 
@@ -205,7 +205,7 @@ function verifyToken(req, res, next){
 	// const token = null
 	jwt.verify(token, 'secretKey', (err, authData)=>{
 		if(err) res.sendStatus(403);
-		next();
+		else next();
 	});
 }
 
