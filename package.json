@@ -27,15 +27,12 @@
     "endcrypt": "^1.2.3",
     "express": "^4.14.0",
     "express-session": "^1.14.0",
-<<<<<<< HEAD
     "file-system": "^2.2.2",
     "fs": "0.0.1-security",
     "geolocation": "^0.2.0",
     "geolocator": "^2.1.5",
     "https": "^1.0.0",
-=======
     "jsonwebtoken": "^8.5.1",
->>>>>>> 0c7b751ff98d8f67a299aa5b6420dfe5024b7a44
     "mongoose": "^5.0.17",
     "node-geocoder": "^3.22.0",
     "passport": "^0.3.2",
