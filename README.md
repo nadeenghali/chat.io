@@ -1,3 +1,36 @@
+## Updated version
+##### Updates by
+
+Sara Nagui Antoun
+
+Bavly Emad Shenouda 
+
+Mira Medhat Ekladious 
+
+Nadeen Nabil Ghali 
+
+##### Updates include
+
++ Group chats
++ Private Individual chats
++ File sharing
++ Location sharing
+
+##### Security features
+
++ Authentication * 
++ E2E encryption of messages, location and files shared 
++ Password hashing *
++ Access Control for groups and private chats
++ Https server
++ P2P messages
++ Tokens
+
+
+* implemented by OmarElGabry
+
+
+
 ![Screenshot](https://raw.githubusercontent.com/OmarElGabry/chat.io/master/public/img/chat.io.gif)
 
 # chat.io
@@ -32,18 +65,18 @@ Check [Demo](http://chatio.herokuapp.com/)
 + Logging Errors and Exceptions using [Winston](https://github.com/winstonjs/winston).
 
 ## Installation<a name="installation"></a>
-### Running Locally
+### Running Locally (HTTP server)
 Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
 
 1. Clone or Download the repository
 
 	```
-	$ git clone https://github.com/OmarElGabry/chat.io.git
-	$ cd chat.io
+	$ git clone https://github.com/nadeenghali/chat.io/
 	```
 2. Install Dependencies
 
 	```
+	$ cd chat.io
 	$ npm install
 	```
 2. Edit configuration file in _app/config/config.json_ with your credentials(see [Setup Configurations](#configurations)).
@@ -60,36 +93,22 @@ Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.co
 	```
 Your app should now be running on [localhost:3000](http://localhost:3000/).
 
-### Deploying to Heroku
-Make sure you have the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
-
-1. Create a new Heroku application, and push your chat application to a Git remote repository
-
+### Running Locally (HTTPS server)
+1. Clone or Download the repository
 	```
-	$ heroku create
-	$ git push heroku master
+	$ git clone https://github.com/nadeenghali/chat.io/
 	```
+2. Checkout mira/location branch
 	
-	or
-	
-	[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-2. Now, you need to set up configuration variables on Heroku. 
-	1. Go to Settings -> Reveal Config Vars.
-	2. Add configuration variables. All needed variables are inside _app/config/index.js_. 
-	Typically, these are the configuration variables you need to assign: 
-	```{ dbURI, sessionSecret, facebookClientID, facebookClientSecret, twitterConsumerKey, twitterConsumerSecret }```(see [Setup Configurations](#configurations)).
-
-3. One last step is to add [Redis](http://redis.io/) as an Add-on on Heroku.
-	1. Go to Resources -> Add-ons
-	2. Select Heroku Redis
-	> You need to setup a billing account even if the add-on is free.
-4. Open your chat application in the browser
-
 	```
-	$ heroku open
+	$ git checkout mira/location
 	```
+3. Place encryption folder sent by email in the project's root directory
+4. Trust the root SSL certificate 
+	a. Open chrome settings > Manage Certificates
+	b. If working on mac KeyChain Access will open. Once there, import the server.crt using File > Import Items. Double click the imported certificate and change the “When using this certificate:” dropdown to Always Trust in the Trust section.
 
+Proceed as the previous example
 
 
 ## How It Works<a name="how-it-works"></a>
