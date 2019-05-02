@@ -27,7 +27,7 @@
         <div class="chat-message clearfix">
           <textarea name="message" placeholder ="Type your message" rows="3"></textarea>
           <input type="file" id="input" name="input">
-          <img style=" width:200px;" src="" id="output">
+          <img style=" width:200px;" src="" id="output" name="output">
           <button type="submit">Send</button>
         </div> <!-- end chat-message -->
       </div> <!-- end chat -->
@@ -47,6 +47,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
     <script src="/js/main.js"></script>
+    <script src = "/js/socketiop2p.min.js"></script>
     <script>
             $(function(){app.chat('<%= room.id %>', '<%= user.username %>')});
     </script>
