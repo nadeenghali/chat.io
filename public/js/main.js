@@ -5,12 +5,12 @@
 var app = {
   rooms: function() {
     var socket = io("/rooms", { transports: ["websocket"] });
-    var p2p = new P2P(socket);
+    // var p2p = new P2P(socket);
 
     // When socket connects, get a list of chatrooms
-    p2p.on("connect", function() {
+    socket.on("connect", function() {
       // Update rooms list upon emitting updateRoomsList event
-      p2p.on("updateRoomsList", function(room) {
+      socket.on("updateRoomsList", function(room) {
         // Display an error message upon a user error(i.e. creating a room with an existing title)
         $(".room-create p.message").remove();
         if (room.error != null) {
@@ -27,7 +27,7 @@ var app = {
         var inputEle = $("input[name='title']");
         var roomTitle = inputEle.val().trim();
         if (roomTitle !== "") {
-          p2p.emit("createRoom", roomTitle);
+          socket.emit("createRoom", roomTitle);
           inputEle.val("");
         }
       });
@@ -36,17 +36,17 @@ var app = {
 
   chat: function(roomId, username) {
     var socket = io("/chatroom", { transports: ["websocket"] });
-    var p2p = new P2P(socket);
+    // var socket = new P2P(socket);
     //import CryptoJS from "crypto-js");
     let image = null;
 
     // When socket connects, join the current chatroom
-    p2p.on("connect", function() {
-      p2p.usePeerConnection = true;
-      p2p.emit("join", roomId);
+    socket.on("connect", function() {
+      socket.usePeerConnection = true;
+      socket.emit("join", roomId);
 
       // Update users list upon emitting updateUsersList event
-      p2p.on("updateUsersList", function(users, clear) {
+      socket.on("updateUsersList", function(users, clear) {
         $(".container p.message").remove();
         if (users.error != null) {
           $(".container").html(`<p class="message error">${users.error}</p>`);
@@ -107,7 +107,7 @@ var app = {
             ).toString()
           );
 
-          p2p.emit(
+          socket.emit(
             "newMessage",
             roomId,
             ////encrypt the wholde message object including the username and date
@@ -142,7 +142,7 @@ var app = {
           };
 
           console.log("sending img");
-          p2p.emit(
+          socket.emit(
             "newMessage",
             roomId,
             //encrypt the wholde message object including the username and date
@@ -165,13 +165,13 @@ var app = {
       });
 
       // Whenever a user leaves the current room, remove the user from users list
-      p2p.on("removeUser", function(userId) {
+      socket.on("removeUser", function(userId) {
         $("li#user-" + userId).remove();
         app.helpers.updateNumOfUsers();
       });
 
       // Append a new message
-      p2p.on("addMessage", function(message) {
+      socket.on("addMessage", function(message) {
         console.log("message", message);
         app.helpers.addMessage(message);
       });
