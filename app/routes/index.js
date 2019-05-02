@@ -50,7 +50,6 @@ router.post('/register', function(req, res, next) {
 			}else{
 				User.create(credentials, function(err, newUser){
 					if(err) throw err;
-					console.log(newUser);
 					req.flash('success', 'Your account has been created. Please log in.');
 					res.redirect('/');
 				});
@@ -65,7 +64,6 @@ router.get('/rooms', [User.isAuthenticated, function(req, res, next) {
 	Room.find(function(err, rooms){
 		if(err) throw err;
 		var i;
-		//console.log(rooms);
 		var tempRooms = []
 		for(i in rooms){
 			if(rooms[i].members.includes(userId)){
@@ -127,7 +125,6 @@ router.post('/chat/create', [User.isAuthenticated, function(req, res, next) {
 
 //add chat room member
 router.post('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, res, next) {
-	console.log("Inside add user")
 	var roomId = req.params.id;
 	var userId = req.params.userId;
 	Room.findById(roomId, function(err, room){
@@ -149,13 +146,32 @@ router.post('/chat/:id/addUsers/:userId',[User.isAuthenticated, function(req, re
 					}
 				})
 				usersList = users;
-				console.log("finish add user")
 				res.render('chooseContacts', { room: room, users: usersList });
-				res.redirect('/chat/addUsers');
 			});
 		})
 	});
 }]);
+
+//private chat
+router.get("/privateroom/:userId", [User.isAuthenticated, function(req, res, next) {
+	var userId = req.params.userId;
+	User.findById(userId, function(err, user){
+		if(err) throw err;
+		if(!user){
+			return next();
+		}
+		var room = {title : req.user.username + " - " + user.username, connections : [], members : [req.user._id, user._id]};
+		Room.create(room, function(err, createdRoom){
+			if(err) throw err;
+			if(!createdRoom){
+				return next();
+			}
+			res.render('chatroom', { user: req.user, room: createdRoom });
+		});
+	
+	})
+}])
+
 
 // Logout
 router.get('/logout', function(req, res, next) {
