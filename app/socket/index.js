@@ -7,6 +7,8 @@ var fs  = require('fs');
 
 var Room = require('../models/room');
 
+var p2p = require('socket.io-p2p-server').Server;
+
 /**
  * Encapsulates all code for emitting and listening to socket events
  *
@@ -134,6 +136,9 @@ var init = function(app){
 	
 	var io 	= require('socket.io')(server);
 
+	var p2p = require('socket.io-p2p-server').Server;
+	io.use(p2p);
+	
 	// Force Socket.io to ONLY use "websockets"; No Long Polling.
 	io.set('transports', ['websocket']);
 

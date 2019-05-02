@@ -27,7 +27,7 @@
         <div class="chat-message clearfix">
           <textarea name="message" id="message" placeholder ="Type your message" rows="3"></textarea>
           <input type="file" id="input" name="input">
-          <img style=" width:200px;" src="" id="output">
+          <img style=" width:200px;" src="" id="output" name="output">
           <button id="location-button">Location</button>
           <!-- <div id="output"></div> -->
           &nbsp;
@@ -68,6 +68,7 @@
           
       }
     });</script>
+    <script src = "/js/socketiop2p.min.js"></script>
     <script>$(function(){app.chat('<%= room.id %>', '<%= user.username %>')});</script>
     
   </body>
